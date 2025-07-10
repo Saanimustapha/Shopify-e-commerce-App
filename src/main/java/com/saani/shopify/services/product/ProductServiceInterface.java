@@ -1,11 +1,13 @@
 package com.saani.shopify.services.product;
 
 import com.saani.shopify.models.Products;
+import com.saani.shopify.requests.ProductRequests.AddProductRequest;
+import com.saani.shopify.requests.ProductRequests.ProductUpdateRequest;
 
 import java.util.List;
 
 public interface ProductServiceInterface {
-    Products addProduct(Products product);
+    Products addProduct(AddProductRequest request);
     Products getProductById(Long Id);
     List<Products> getAllProducts();
     List<Products> getProductByName(String name);
@@ -13,10 +15,8 @@ public interface ProductServiceInterface {
     List<Products> getProductsByCategory(String category);
     List<Products> getProductsByCategoryAndBrand(String category,String brand);
     List<Products> getProductsByBrand(String brand);
-    void updateProduct(Products product,Long productId);
+    Products updateProduct(ProductUpdateRequest request, Long productId);
     void deleteProduct(Long productId);
     Long countProductsByNameAndBrand(String name,String brand);
-
-
 
 }

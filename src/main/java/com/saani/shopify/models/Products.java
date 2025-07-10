@@ -11,7 +11,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Products {
@@ -29,6 +28,16 @@ public class Products {
     @JoinColumn(name="category_id")
     private Category category;
 
+
     @OneToMany(mappedBy = "products", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Images> images;
+
+    public Products(String name, String brand, BigDecimal price, Integer quantity, String description, Category category) {
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+        this.quantity = quantity;
+        this.description = description;
+        this.category = category;
+    }
 }
