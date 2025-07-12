@@ -1,7 +1,7 @@
 package com.saani.shopify.services.category;
 
-import com.saani.shopify.exceptions.CategoryNotFoundException;
-import com.saani.shopify.exceptions.CategoryExistsException;
+import com.saani.shopify.exceptions.ResourceNotFoundException;
+import com.saani.shopify.exceptions.ResourceExistsException;
 import com.saani.shopify.models.Category;
 import com.saani.shopify.repository.CategoryRepository;
 import com.saani.shopify.requests.CategoryRequests.AddCategoryRequest;
@@ -21,13 +21,13 @@ public class CategoryService implements CategoryServiceInterface{
     @Override
     public Category getCategoryById(Long Id) {
         return categoryRepository.findById(Id)
-                .orElseThrow(() -> new CategoryNotFoundException("Category does not exist."));
+                .orElseThrow(() -> new ResourceNotFoundException("Category does not exist."));
     }
 
     @Override
     public Category getCategoryByName(String name) {
         return categoryRepository.findByName(name)
-                .orElseThrow(() -> new CategoryNotFoundException("Category does not exist."));
+                .orElseThrow(() -> new ResourceNotFoundException("Category does not exist."));
     }
 
     @Override
@@ -37,28 +37,26 @@ public class CategoryService implements CategoryServiceInterface{
 
     @Override
     public Category addNewCategory(AddCategoryRequest request) {
-
-        Optional<Category> category = categoryRepository.findByName(request.getName());
-
-        if (category.isPresent()){
-            throw new CategoryExistsException("The category '" + request.getName() + "' already exists.");
-        }
+        categoryRepository.findByNameIgnoreCase(request.getName())
+                .ifPresent(existing -> {
+                    throw new ResourceExistsException("The category '" + request.getName() + "' already exists.");
+                });
 
         return categoryRepository.save(createNewCategory(request));
     }
 
-    private Category createNewCategory(AddCategoryRequest request){
-        return new Category(request.getName());
+    private Category createNewCategory(AddCategoryRequest request) {
+        return new Category(request.getName().trim());
     }
+
 
     @Override
-    public Category updateCategory(UpdateCategoryRequest request) {
-        return categoryRepository.findByName(request.getName())
+    public Category updateCategory(UpdateCategoryRequest request, Long id) {
+        return categoryRepository.findById(id)
                 .map(existingCategory -> updateExistingCategory(request,existingCategory))
-                .map(categoryRepository :: save)
-                .orElseThrow(() -> new CategoryNotFoundException("Category does not exist."));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
     }
+
 
     private Category updateExistingCategory(UpdateCategoryRequest request,Category existingCategory){
         existingCategory.setName(request.getName());
@@ -70,7 +68,7 @@ public class CategoryService implements CategoryServiceInterface{
     public void deleteCategory(Long Id) {
         categoryRepository.findById(Id)
                 .ifPresentOrElse(categoryRepository :: delete,
-                        () -> {throw new CategoryNotFoundException("Category does not exist.");});
+                        () -> {throw new ResourceNotFoundException("Category does not exist.");});
 
     }
 }

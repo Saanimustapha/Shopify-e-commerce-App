@@ -1,7 +1,6 @@
 package com.saani.shopify.services.product;
 
-import com.saani.shopify.exceptions.CategoryNotFoundException;
-import com.saani.shopify.exceptions.ProductNotFoundException;
+import com.saani.shopify.exceptions.ResourceNotFoundException;
 import com.saani.shopify.models.Category;
 import com.saani.shopify.models.Products;
 import com.saani.shopify.repository.CategoryRepository;
@@ -47,7 +46,7 @@ public class ProductService implements ProductServiceInterface{
     @Override
     public Products getProductById(Long Id) {
         return productRepository.findById(Id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
 
     @Override
@@ -85,7 +84,7 @@ public class ProductService implements ProductServiceInterface{
         return productRepository.findById(productId)
                 .map(existingProduct -> updateExistingProduct(existingProduct,request))
                 .map(productRepository :: save)
-                .orElseThrow(() -> new ProductNotFoundException("Product does not exist."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product does not exist."));
 
     }
 
@@ -96,7 +95,7 @@ public class ProductService implements ProductServiceInterface{
         existingProduct.setDescription(request.getDescription());
 
         Category category = categoryRepository.findByName(request.getCategory().getName())
-                .orElseThrow(() -> new CategoryNotFoundException("Category does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category does not exist"));
         existingProduct.setCategory(category);
 
         return existingProduct;
@@ -106,7 +105,7 @@ public class ProductService implements ProductServiceInterface{
     public void deleteProduct(Long productId) {
         productRepository.findById(productId)
                 .ifPresentOrElse(productRepository::delete,
-                        () -> {throw new ProductNotFoundException("Product not found");});
+                        () -> {throw new ResourceNotFoundException("Product not found");});
 
     }
 
