@@ -24,6 +24,12 @@ public class ImageService implements ImageServiceInterface{
     private final ProductServiceInterface productService;
 
     @Override
+    public Images getImageById(Long id){
+        return imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Image not found"));
+    }
+
+    @Override
     public void deleteImageById(Long id) {
         imageRepository.findById(id)
                 .ifPresentOrElse(
