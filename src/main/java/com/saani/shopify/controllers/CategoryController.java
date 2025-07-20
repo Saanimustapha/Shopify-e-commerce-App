@@ -33,23 +33,23 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/category/${categoryId}")
+    @GetMapping("/category/{categoryId}")
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long categoryId){
         try {
             Category category = categoryService.getCategoryById(categoryId);
             return ResponseEntity.ok(new ApiResponse("Category Found",category));
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Category not found",e.getMessage()));
         }
     }
 
-    @GetMapping("/category/${categoryName}")
+    @GetMapping("/category/{categoryName}")
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String categoryName){
 
         try {
             Category category = categoryService.getCategoryByName(categoryName);
             return ResponseEntity.ok(new ApiResponse("Category Found",category));
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Category Not Found",NOT_FOUND));
         }
     }
@@ -60,23 +60,20 @@ public class CategoryController {
         try {
             Category category = categoryService.addNewCategory(newCategory);
             return ResponseEntity.ok(new ApiResponse("Category Added Successfully",category));
-        } catch (ResourceExistsException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(CONFLICT).body(new ApiResponse("Failed Adding Category",CONFLICT));
         }
     }
 
-    @DeleteMapping("/category/${categoryId}")
+    @DeleteMapping("/category/{categoryId}")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long categoryId){
         try {
             categoryService.deleteCategory(categoryId);
             return ResponseEntity.ok(new ApiResponse("Category Deleted",null));
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Failed Category Deletion",null));
         }
     }
-
-
-
 
 
 }

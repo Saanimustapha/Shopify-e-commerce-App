@@ -38,7 +38,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/image/download/${imageId}")
+    @GetMapping("/image/download/{imageId}")
     public ResponseEntity<Resource> downloadImage(@PathVariable Long imageId){
         Images images = imageService.getImageById(imageId);
 
@@ -56,7 +56,7 @@ public class ImageController {
         }
     }
 
-    @PutMapping("/image/${imageId}/update")
+    @PutMapping("/image/{imageId}/update")
     public ResponseEntity<ApiResponse> updateImage(@RequestBody MultipartFile file, @PathVariable Long imageId){
         Images image = imageService.getImageById(imageId);
 
@@ -65,7 +65,7 @@ public class ImageController {
                 imageService.updateImage(file,imageId);
                 return ResponseEntity.ok(new ApiResponse("Update success",null));
             }
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
         }
 
@@ -73,7 +73,7 @@ public class ImageController {
 
     }
 
-    @DeleteMapping("images/${imageId}/delete")
+    @DeleteMapping("images/{imageId}/delete")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId){
         Images image = imageService.getImageById(imageId);
 
@@ -82,7 +82,7 @@ public class ImageController {
                 imageService.deleteImageById(imageId);
                 return ResponseEntity.ok(new ApiResponse("Delete success",null));
             }
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Delete Failed",e.getMessage()));
         }
 
