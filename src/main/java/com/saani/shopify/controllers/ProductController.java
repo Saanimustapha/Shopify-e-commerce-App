@@ -66,14 +66,25 @@ public class ProductController {
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId){
         try {
             productService.deleteProduct(productId);
-            return ResponseEntity.ok(new ApiResponse("Product Delete Success",null));
+            return ResponseEntity.ok(new ApiResponse("Product Delete Success", null));
         } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Product Deletion Failed",null));
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Product Deletion Failed", null));
         }
     }
 
-    @GetMapping("/product/{name}")
-    public ResponseEntity<ApiResponse> getProductByName(@PathVariable String name){
+//
+//    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId){
+//        try {
+//            productService.deleteProduct(productId);
+//            return ResponseEntity.ok(new ApiResponse("Product Delete Success",null));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Product Deletion Failed",null));
+//        }
+//    }
+
+    @GetMapping("/product/by-name")
+    public ResponseEntity<ApiResponse> getProductByName(@RequestParam String name){
         try {
             List<Products> products = productService.getProductByName(name);
             return ResponseEntity.ok(new ApiResponse("Products Retrieved Success",products));
@@ -96,8 +107,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping("product/{category}")
-    public ResponseEntity<ApiResponse> getProductByCategory(@PathVariable String category){
+    @GetMapping("product/by-category")
+    public ResponseEntity<ApiResponse> getProductByCategory(@RequestParam String category){
         try {
             List<Products> products = productService.getProductsByCategory(category);
 
@@ -124,8 +135,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/product/{brand}")
-    public ResponseEntity<ApiResponse> getProductsByBrand(@PathVariable String brand){
+    @GetMapping("/product/by-brand")
+    public ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String brand){
         try {
             List<Products> products = productService.getProductsByBrand(brand);
 

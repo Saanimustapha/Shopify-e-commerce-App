@@ -79,35 +79,77 @@ public class ProductService implements ProductServiceInterface{
         return productRepository.findByBrand(brand);
     }
 
-    @Override
-    public Products updateProduct(ProductUpdateRequest request, Long productId) {
-        return productRepository.findById(productId)
-                .map(existingProduct -> updateExistingProduct(existingProduct,request))
-                .map(productRepository :: save)
-                .orElseThrow(() -> new ResourceNotFoundException("Product does not exist."));
+//    @Override
+//    public Products updateProduct(ProductUpdateRequest request, Long productId) {
+//        return productRepository.findById(productId)
+//                .map(existingProduct -> updateExistingProduct(existingProduct,request))
+//                .map(productRepository :: save)
+//                .orElseThrow(() -> new ResourceNotFoundException("Product does not exist."));
+//
+//    }
+//
+//    private Products updateExistingProduct(Products existingProduct,ProductUpdateRequest request){
+//        existingProduct.setName(request.getName());
+//        existingProduct.setBrand(request.getBrand());
+//        existingProduct.setPrice(request.getPrice());
+//        existingProduct.setDescription(request.getDescription());
+//
+//        Category category = categoryRepository.findByName(request.getCategory().getName())
+//                .orElseThrow(() -> new ResourceNotFoundException("Category does not exist"));
+//        existingProduct.setCategory(category);
+//
+//        return existingProduct;
+//    }
 
+    public Products updateProduct(ProductUpdateRequest request,Long productId) {
+        Products product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        if (request.getBrand() != null) {
+            product.setBrand(request.getBrand());
+        }
+
+        if (request.getName() != null) {
+            product.setName(request.getName());
+        }
+
+        if (request.getPrice() != null) {
+            product.setPrice(request.getPrice());
+        }
+
+        if (request.getQuantity() != null) {
+            product.setQuantity(request.getQuantity());
+        }
+
+        if (request.getDescription() != null) {
+            product.setDescription(request.getDescription());
+        }
+
+        if (request.getCategory() != null) {
+            Category category = categoryRepository.findByName(request.getCategory().getName())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+            product.setCategory(category);
+        }
+
+        productRepository.save(product);
+        return product;
     }
 
-    private Products updateExistingProduct(Products existingProduct,ProductUpdateRequest request){
-        existingProduct.setName(request.getName());
-        existingProduct.setBrand(request.getBrand());
-        existingProduct.setPrice(request.getPrice());
-        existingProduct.setDescription(request.getDescription());
 
-        Category category = categoryRepository.findByName(request.getCategory().getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Category does not exist"));
-        existingProduct.setCategory(category);
-
-        return existingProduct;
-    }
+//    @Override
+//    public void deleteProduct(Long productId) {
+//        productRepository.findById(productId)
+//                .ifPresent(productRepository::delete);
+//
+//    }
 
     @Override
     public void deleteProduct(Long productId) {
-        productRepository.findById(productId)
-                .ifPresentOrElse(productRepository::delete,
-                        () -> {throw new ResourceNotFoundException("Product not found");});
-
+        Products product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        productRepository.delete(product);
     }
+
 
     @Override
     public Long countProductsByNameAndBrand(String name, String brand) {
